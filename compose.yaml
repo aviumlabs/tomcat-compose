@@ -1,0 +1,46 @@
+services:
+  app:
+    env_file: 
+      - path: ./.env 
+        required: true
+    image: "aviumlabs/tomcat-ant:9.0.118-alpine" 
+    volumes:
+      - act_backup:/opt/backup
+      - act_inst_logs:/opt/tomcat/instances/bin-a/logs
+      - act_inst_conf:/opt/tomcat/instances/bin-a/conf
+      - act_secrets:/opt/secrets
+      - act_inst_webapps:/opt/tomcat/instances/bin-a/webapps
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - postgres_password
+  db:
+    env_file: 
+      - path: ./.env 
+        required: true
+    image: "postgres:15-alpine3.23"
+    restart: always
+    volumes:
+      - act_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    secrets:
+      - postgres_password
+
+volumes:
+  act_db_data:
+  act_backup:
+  act_inst_logs:
+  act_inst_conf:
+  act_secrets:
+  act_inst_webapps:
+secrets:
+  postgres_password:
+    file: ./.secret_db

@@ -1,0 +1,23 @@
+# docker compose
+compose.yaml
+
+# environment files
+.env
+.appdev
+
+# Secrets
+.secrets*
+
+# Apple
+.DS_Store
+
+# git
+.git
+.gitignore
+
+# Visual Studio
+.coverage
+.coverage.*
+
+# Aviumlabs specific
+README.md
